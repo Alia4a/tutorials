@@ -15,11 +15,12 @@ jobs:
           python-version: '3.10'
           cache: 'pip'
         run: pip install
+      - name: Install apt
         run: apt install
       - name: Python syntax check
         run: python -m compileall estate estate_account meeting_schedule
 
       - name: XML syntax check
-        run: |
+        run:
           sudo apt-get update && sudo apt-get install -y libxml2-utils
           xmllint --noout estate/views/*.xml meeting_schedule/views/*.xml meeting_schedule/security/*.xml 2>&1 || find estate estate_account meeting_schedule -name '*.xml' -exec xmllint --noout {} + echo "All XML OK"
