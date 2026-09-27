@@ -10,4 +10,5 @@
         "views/reservation_views.xml",
         "views/meeting_menus.xml",
 	],
+	'license': 'LGPL-3',
 }

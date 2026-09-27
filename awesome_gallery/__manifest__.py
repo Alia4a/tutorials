@@ -14,5 +14,5 @@
             'awesome_gallery/static/src/**/*',
         ],
     },
-    'license': 'AGPL-3'
+    'license': 'LGPL-3'
 }
