@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_inspection_document">
+        <t t-call="web.external_layout">
+            <t t-set="o" t-value="o.with_context(lang=o.env.lang)"/>
+            <div class="page">
+                <h2>HSE Inspection Report: <span t-field="o.reference"/></h2>
+                <div class="row mt8 mb8">
+                    <div class="col-6">
+                        <strong>Checklist:</strong> <span t-field="o.checklist_id.name"/><br/>
+                        <strong>Category:</strong> <span t-field="o.category"/><br/>
+                        <strong>Date:</strong> <span t-field="o.date_inspection"/><br/>
+                    </div>
+                    <div class="col-6">
+                        <strong>Inspector:</strong> <span t-field="o.inspector_id.name"/><br/>
+                        <strong>Department:</strong> <span t-field="o.department_id.name"/><br/>
+                        <strong>Equipment:</strong> <span t-field="o.equipment_id.name"/><br/>
+                        <strong>Compliance:</strong> <span t-field="o.compliance_rate"/> %<br/>
+                        <strong>Status:</strong> <span t-field="o.state"/><br/>
+                    </div>
+                </div>
+                <h4>Answers</h4>
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th>#</th><th>Question</th><th>Type</th><th>Answer</th><th>Notes</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="o.line_ids" t-as="line">
+                            <td><span t-field="line.sequence"/></td>
+                            <td><span t-field="line.question_id.name"/></td>
+                            <td><span t-field="line.question_type"/></td>
+                            <td><span t-field="line.answer_display"/></td>
+                            <td><span t-field="line.notes"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h4>Findings</h4>
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th>Ref</th><th>Title</th><th>Severity</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="o.finding_ids" t-as="f">
+                            <td><span t-field="f.reference"/></td>
+                            <td><span t-field="f.name"/></td>
+                            <td><span t-field="f.severity"/></td>
+                            <td><span t-field="f.state"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h4>Corrective Actions</h4>
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th>Ref</th><th>Title</th><th>Responsible</th><th>Due</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="o.action_ids" t-as="a">
+                            <td><span t-field="a.reference"/></td>
+                            <td><span t-field="a.name"/></td>
+                            <td><span t-field="a.responsible_id.name"/></td>
+                            <td><span t-field="a.date_due"/></td>
+                            <td><span t-field="a.state"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p t-if="o.notes"><strong>General notes:</strong> <span t-field="o.notes"/></p>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_inspection">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="hse_inspection_system.report_inspection_document" t-lang="o.env.lang"/>
+            </t>
+        </t>
+    </template>
+</odoo>

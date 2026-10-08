@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Demo: Machine Safety checklist -->
+    <record id="demo_checklist_machine" model="hse.checklist">
+        <field name="name">Machine Safety Inspection</field>
+        <field name="code">MCH-SAF</field>
+        <field name="category">machine_safety</field>
+        <field name="description">Guards, emergency stops, lockout/tagout and housekeeping for production machines.</field>
+        <field name="state">active</field>
+    </record>
+    <record id="demo_q_machine_estop" model="hse.checklist.question">
+        <field name="name">Emergency Stop functional</field>
+        <field name="checklist_id" ref="demo_checklist_machine"/>
+        <field name="sequence">10</field>
+        <field name="question_type">pass_fail</field>
+        <field name="is_required" eval="True"/>
+        <field name="help_text">Press and release the E-Stop; machine must stop immediately.</field>
+    </record>
+    <record id="demo_q_machine_guard" model="hse.checklist.question">
+        <field name="name">Safety guards in place</field>
+        <field name="checklist_id" ref="demo_checklist_machine"/>
+        <field name="sequence">20</field>
+        <field name="question_type">pass_fail</field>
+        <field name="is_required" eval="True"/>
+    </record>
+    <record id="demo_q_machine_noise" model="hse.checklist.question">
+        <field name="name">Noise level (dB)</field>
+        <field name="checklist_id" ref="demo_checklist_machine"/>
+        <field name="sequence">30</field>
+        <field name="question_type">numeric</field>
+        <field name="is_required" eval="True"/>
+        <field name="help_text">Measure with calibrated sound meter at operator position.</field>
+    </record>
+    <record id="demo_q_machine_loto" model="hse.checklist.question">
+        <field name="name">Lockout/Tagout procedure followed</field>
+        <field name="checklist_id" ref="demo_checklist_machine"/>
+        <field name="sequence">40</field>
+        <field name="question_type">yes_no</field>
+        <field name="is_required" eval="True"/>
+    </record>
+    <record id="demo_q_machine_notes" model="hse.checklist.question">
+        <field name="name">General observations</field>
+        <field name="checklist_id" ref="demo_checklist_machine"/>
+        <field name="sequence">50</field>
+        <field name="question_type">text</field>
+        <field name="is_required" eval="False"/>
+    </record>
+
+    <!-- Demo: Fire Safety checklist -->
+    <record id="demo_checklist_fire" model="hse.checklist">
+        <field name="name">Fire Safety Inspection</field>
+        <field name="code">FIRE-SAF</field>
+        <field name="category">fire_safety</field>
+        <field name="description">Extinguishers, alarms, exits and flammable storage checks.</field>
+        <field name="state">active</field>
+    </record>
+    <record id="demo_q_fire_ext" model="hse.checklist.question">
+        <field name="name">Fire extinguishers inspected &amp; accessible</field>
+        <field name="checklist_id" ref="demo_checklist_fire"/>
+        <field name="sequence">10</field>
+        <field name="question_type">pass_fail</field>
+        <field name="is_required" eval="True"/>
+    </record>
+    <record id="demo_q_fire_alarm" model="hse.checklist.question">
+        <field name="name">Fire alarm tested</field>
+        <field name="checklist_id" ref="demo_checklist_fire"/>
+        <field name="sequence">20</field>
+        <field name="question_type">pass_fail</field>
+        <field name="is_required" eval="True"/>
+    </record>
+    <record id="demo_q_fire_exit" model="hse.checklist.question">
+        <field name="name">Emergency exits clear</field>
+        <field name="checklist_id" ref="demo_checklist_fire"/>
+        <field name="sequence">30</field>
+        <field name="question_type">yes_no</field>
+        <field name="is_required" eval="True"/>
+    </record>
+    <record id="demo_q_fire_temp" model="hse.checklist.question">
+        <field name="name">Storage area temperature (°C)</field>
+        <field name="checklist_id" ref="demo_checklist_fire"/>
+        <field name="sequence">40</field>
+        <field name="question_type">numeric</field>
+        <field name="is_required" eval="False"/>
+    </record>
+    <record id="demo_q_fire_photo" model="hse.checklist.question">
+        <field name="name">Photo evidence of extinguisher tag</field>
+        <field name="checklist_id" ref="demo_checklist_fire"/>
+        <field name="sequence">50</field>
+        <field name="question_type">file</field>
+        <field name="is_required" eval="False"/>
+    </record>
+
+    <!-- Demo rules (UC-05/UC-06): IF Fail THEN Critical finding + action -->
+    <record id="demo_rule_estop" model="hse.rule">
+        <field name="name">Emergency Stop failed → Critical Finding</field>
+        <field name="checklist_id" ref="demo_checklist_machine"/>
+        <field name="apply_on">any</field>
+        <field name="description">IF Emergency Stop == Fail THEN create Critical Finding + Corrective Action.</field>
+    </record>
+    <record id="demo_rule_estop_cond" model="hse.rule.condition">
+        <field name="rule_id" ref="demo_rule_estop"/>
+        <field name="question_id" ref="demo_q_machine_estop"/>
+        <field name="operator">equals</field>
+        <field name="value_target">fail</field>
+    </record>
+    <record id="demo_rule_estop_action" model="hse.rule.action">
+        <field name="rule_id" ref="demo_rule_estop"/>
+        <field name="action_type">create_action</field>
+        <field name="severity">critical</field>
+        <field name="priority">3</field>
+        <field name="due_days">3</field>
+        <field name="message">Emergency Stop failed during inspection. Lock machine and repair immediately.</field>
+    </record>
+
+    <record id="demo_rule_noise" model="hse.rule">
+        <field name="name">Noise &gt; 85 dB → High Finding</field>
+        <field name="checklist_id" ref="demo_checklist_machine"/>
+        <field name="apply_on">any</field>
+        <field name="description">IF Noise level greater than 85 THEN create High Finding + action.</field>
+    </record>
+    <record id="demo_rule_noise_cond" model="hse.rule.condition">
+        <field name="rule_id" ref="demo_rule_noise"/>
+        <field name="question_id" ref="demo_q_machine_noise"/>
+        <field name="operator">greater_than</field>
+        <field name="value_target">85</field>
+    </record>
+    <record id="demo_rule_noise_action" model="hse.rule.action">
+        <field name="rule_id" ref="demo_rule_noise"/>
+        <field name="action_type">create_action</field>
+        <field name="severity">high</field>
+        <field name="priority">2</field>
+        <field name="due_days">7</field>
+        <field name="message">Noise exposure above 85 dB. Provide hearing protection and investigate source.</field>
+    </record>
+
+    <record id="demo_rule_fire_ext" model="hse.rule">
+        <field name="name">Fire extinguisher failed → High Finding</field>
+        <field name="checklist_id" ref="demo_checklist_fire"/>
+        <field name="apply_on">any</field>
+        <field name="description">IF extinguisher check == Fail THEN create High Finding + action.</field>
+    </record>
+    <record id="demo_rule_fire_ext_cond" model="hse.rule.condition">
+        <field name="rule_id" ref="demo_rule_fire_ext"/>
+        <field name="question_id" ref="demo_q_fire_ext"/>
+        <field name="operator">equals</field>
+        <field name="value_target">fail</field>
+    </record>
+    <record id="demo_rule_fire_ext_action" model="hse.rule.action">
+        <field name="rule_id" ref="demo_rule_fire_ext"/>
+        <field name="action_type">create_action</field>
+        <field name="severity">high</field>
+        <field name="priority">2</field>
+        <field name="due_days">2</field>
+        <field name="message">Fire extinguisher missing/expired. Replace immediately.</field>
+    </record>
+</odoo>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="hse_menu_root" name="HSE Inspections" sequence="30"/>
+
+    <menuitem id="hse_menu_execution" name="Inspections" parent="hse_menu_root" sequence="10"/>
+    <menuitem id="hse_menu_inspection_list" name="Inspections" parent="hse_menu_execution" action="hse_inspection_action" sequence="10"/>
+    <menuitem id="hse_menu_finding_list" name="Findings" parent="hse_menu_execution" action="hse_finding_action" sequence="20"/>
+    <menuitem id="hse_menu_action_list" name="Corrective Actions" parent="hse_menu_execution" action="hse_corrective_action_action" sequence="30"/>
+
+    <menuitem id="hse_menu_config" name="Configuration" parent="hse_menu_root" sequence="20"/>
+    <menuitem id="hse_menu_checklist" name="Checklists" parent="hse_menu_config" action="hse_checklist_action" sequence="10"/>
+    <menuitem id="hse_menu_rule" name="Business Rules" parent="hse_menu_config" action="hse_rule_action" sequence="20"/>
+
+    <menuitem id="hse_menu_reporting" name="Reporting" parent="hse_menu_root" sequence="30"/>
+    <menuitem id="hse_menu_dashboard_graph" name="Inspections Analysis" parent="hse_menu_reporting" action="hse_inspection_graph_action" sequence="10"/>
+    <menuitem id="hse_menu_findings_pivot" name="Findings Analysis" parent="hse_menu_reporting" action="hse_finding_pivot_action" sequence="20"/>
+</odoo>

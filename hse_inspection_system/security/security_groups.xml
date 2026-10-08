@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hse_group_inspector" model="res.groups">
+        <field name="name">HSE Inspector</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="hse_group_supervisor" model="res.groups">
+        <field name="name">HSE Supervisor</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+        <field name="implied_ids" eval="[(4, ref('hse_inspection_system.hse_group_inspector'))]"/>
+    </record>
+    <record id="hse_group_manager" model="res.groups">
+        <field name="name">HSE Manager</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+        <field name="implied_ids" eval="[(4, ref('hse_inspection_system.hse_group_supervisor'))]"/>
+    </record>
+</odoo>

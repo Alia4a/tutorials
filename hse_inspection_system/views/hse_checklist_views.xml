@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Checklist: search / tree / form -->
+    <record id="hse_checklist_view_search" model="ir.ui.view">
+        <field name="name">hse.checklist.search</field>
+        <field name="model">hse.checklist</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="category"/>
+                <filter name="active" string="Active" domain="[('state','=','active')]"/>
+                <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="by_category" string="Category" context="{'group_by': 'category'}"/>
+                    <filter name="by_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="hse_checklist_view_tree" model="ir.ui.view">
+        <field name="name">hse.checklist.tree</field>
+        <field name="model">hse.checklist</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="category"/>
+                <field name="state"/>
+                <field name="question_count"/>
+                <field name="inspection_count"/>
+                <field name="active" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="hse_checklist_view_form" model="ir.ui.view">
+        <field name="name">hse.checklist.form</field>
+        <field name="model">hse.checklist</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_draft" string="Set to Draft" type="object" states="active,archived" class="btn-secondary"/>
+                    <button name="action_activate" string="Activate" type="object" states="draft" class="btn-primary"/>
+                    <button name="action_archive_checklist" string="Archive" type="object" states="active,draft" class="btn-secondary"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,archived"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="category"/>
+                        </group>
+                        <group>
+                            <field name="question_count" readonly="1"/>
+                            <field name="inspection_count" readonly="1"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="Purpose and scope of this checklist..."/>
+                    <notebook>
+                        <page string="Questions">
+                            <field name="question_ids" context="{'default_checklist_id': id}">
+                                <tree editable="bottom" default_order="sequence">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="question_type"/>
+                                    <field name="is_required"/>
+                                    <field name="selection_options"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Business Rules">
+                            <field name="rule_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="apply_on"/>
+                                    <field name="active"/>
+                                    <field name="triggered_count"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Inspections">
+                            <field name="inspection_ids" readonly="1">
+                                <tree>
+                                    <field name="reference"/>
+                                    <field name="date_inspection"/>
+                                    <field name="inspector_id"/>
+                                    <field name="compliance_rate"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="hse_checklist_action" model="ir.actions.act_window">
+        <field name="name">Checklists</field>
+        <field name="res_model">hse.checklist</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- Question standalone views (used from Configuration if needed) -->
+    <record id="hse_question_view_tree" model="ir.ui.view">
+        <field name="name">hse.checklist.question.tree</field>
+        <field name="model">hse.checklist.question</field>
+        <field name="arch" type="xml">
+            <tree default_order="sequence">
+                <field name="sequence" widget="handle"/>
+                <field name="checklist_id"/>
+                <field name="name"/>
+                <field name="question_type"/>
+                <field name="is_required"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="hse_question_view_form" model="ir.ui.view">
+        <field name="name">hse.checklist.question.form</field>
+        <field name="model">hse.checklist.question</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="checklist_id"/>
+                            <field name="sequence"/>
+                            <field name="question_type"/>
+                            <field name="is_required"/>
+                        </group>
+                        <group>
+                            <field name="selection_options" attrs="{'required': [('question_type','=','selection')], 'invisible': [('question_type','!=','selection')]}"/>
+                            <field name="has_min_max" attrs="{'invisible': [('question_type','!=','numeric')]}"/>
+                            <field name="min_value" attrs="{'invisible': [('has_min_max','=',False)]}"/>
+                            <field name="max_value" attrs="{'invisible': [('has_min_max','=',False)]}"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <field name="help_text"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

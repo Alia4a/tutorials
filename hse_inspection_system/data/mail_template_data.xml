@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mail_template_finding_assigned" model="mail.template">
+        <field name="name">HSE Finding Assigned</field>
+        <field name="model_id" ref="hse_inspection_system.model_hse_finding"/>
+        <field name="email_from">${(user.email or '')|safe}</field>
+        <field name="subject">HSE Finding ${object.reference}: ${object.name}</field>
+        <field name="body_html"><![CDATA[
+<p>Dear ${object.responsible_id.name},</p>
+<p>A new HSE finding <b>${object.reference}</b> requires your attention:</p>
+<ul>
+  <li><b>Title:</b> ${object.name}</li>
+  <li><b>Severity:</b> ${object.severity}</li>
+  <li><b>Inspection:</b> ${object.inspection_id.reference}</li>
+  <li><b>Description:</b> ${object.description or ''}</li>
+</ul>
+<p>Please review it in Odoo.</p>
+        ]]></field>
+        <field name="lang">${object.env.lang}</field>
+        <field name="auto_delete">True</field>
+    </record>
+    <record id="mail_template_corrective_action_assigned" model="mail.template">
+        <field name="name">HSE Corrective Action Assigned</field>
+        <field name="model_id" ref="hse_inspection_system.model_hse_corrective_action"/>
+        <field name="email_from">${(user.email or '')|safe}</field>
+        <field name="subject">HSE Action ${object.reference}: ${object.name} (due ${object.date_due})</field>
+        <field name="body_html"><![CDATA[
+<p>Dear ${object.responsible_id.name},</p>
+<p>You have been assigned corrective action <b>${object.reference}</b>:</p>
+<ul>
+  <li><b>Title:</b> ${object.name}</li>
+  <li><b>Due date:</b> ${object.date_due}</li>
+  <li><b>Priority:</b> ${object.priority}</li>
+  <li><b>Details:</b> ${object.description or ''}</li>
+</ul>
+<p>Please implement the remediation and mark the action Resolved with evidence.</p>
+        ]]></field>
+        <field name="lang">${object.env.lang}</field>
+        <field name="auto_delete">True</field>
+    </record>
+</odoo>

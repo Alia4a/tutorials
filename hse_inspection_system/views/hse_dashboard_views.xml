@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- UC-20: KPI dashboard via graph / pivot views -->
+    <record id="hse_inspection_view_graph" model="ir.ui.view">
+        <field name="name">hse.inspection.graph</field>
+        <field name="model">hse.inspection</field>
+        <field name="arch" type="xml">
+            <graph string="Inspections Analysis" type="bar">
+                <field name="checklist_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="compliance_rate" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="hse_inspection_view_pivot" model="ir.ui.view">
+        <field name="name">hse.inspection.pivot</field>
+        <field name="model">hse.inspection</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="checklist_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="compliance_rate" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="hse_inspection_graph_action" model="ir.actions.act_window">
+        <field name="name">Inspections Analysis</field>
+        <field name="res_model">hse.inspection</field>
+        <field name="view_mode">graph,pivot,tree,form</field>
+    </record>
+
+    <record id="hse_finding_view_graph" model="ir.ui.view">
+        <field name="name">hse.finding.graph</field>
+        <field name="model">hse.finding</field>
+        <field name="arch" type="xml">
+            <graph string="Findings Analysis" type="bar">
+                <field name="severity" type="row"/>
+                <field name="state" type="col"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="hse_finding_view_pivot" model="ir.ui.view">
+        <field name="name">hse.finding.pivot</field>
+        <field name="model">hse.finding</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="checklist_id" type="row"/>
+                <field name="severity" type="row"/>
+                <field name="state" type="col"/>
+            </pivot>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,28 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hse_checklist_manager,HSE Checklist Manager,model_hse_checklist,hse_inspection_system.hse_group_manager,1,1,1,1
+access_hse_checklist_supervisor,HSE Checklist Supervisor,model_hse_checklist,hse_inspection_system.hse_group_supervisor,1,0,0,0
+access_hse_checklist_inspector,HSE Checklist Inspector,model_hse_checklist,hse_inspection_system.hse_group_inspector,1,0,0,0
+access_hse_question_manager,HSE Question Manager,model_hse_checklist_question,hse_inspection_system.hse_group_manager,1,1,1,1
+access_hse_question_supervisor,HSE Question Supervisor,model_hse_checklist_question,hse_inspection_system.hse_group_supervisor,1,0,0,0
+access_hse_question_inspector,HSE Question Inspector,model_hse_checklist_question,hse_inspection_system.hse_group_inspector,1,0,0,0
+access_hse_inspection_manager,HSE Inspection Manager,model_hse_inspection,hse_inspection_system.hse_group_manager,1,1,1,1
+access_hse_inspection_supervisor,HSE Inspection Supervisor,model_hse_inspection,hse_inspection_system.hse_group_supervisor,1,1,1,0
+access_hse_inspection_inspector,HSE Inspection Inspector,model_hse_inspection,hse_inspection_system.hse_group_inspector,1,1,1,0
+access_hse_line_manager,HSE Line Manager,model_hse_inspection_line,hse_inspection_system.hse_group_manager,1,1,1,1
+access_hse_line_supervisor,HSE Line Supervisor,model_hse_inspection_line,hse_inspection_system.hse_group_supervisor,1,1,1,0
+access_hse_line_inspector,HSE Line Inspector,model_hse_inspection_line,hse_inspection_system.hse_group_inspector,1,1,1,0
+access_hse_rule_manager,HSE Rule Manager,model_hse_rule,hse_inspection_system.hse_group_manager,1,1,1,1
+access_hse_rule_supervisor,HSE Rule Supervisor,model_hse_rule,hse_inspection_system.hse_group_supervisor,1,1,0,0
+access_hse_rule_inspector,HSE Rule Inspector,model_hse_rule,hse_inspection_system.hse_group_inspector,1,0,0,0
+access_hse_rule_condition_manager,HSE Rule Condition Manager,model_hse_rule_condition,hse_inspection_system.hse_group_manager,1,1,1,1
+access_hse_rule_condition_supervisor,HSE Rule Condition Supervisor,model_hse_rule_condition,hse_inspection_system.hse_group_supervisor,1,1,0,0
+access_hse_rule_condition_inspector,HSE Rule Condition Inspector,model_hse_rule_condition,hse_inspection_system.hse_group_inspector,1,0,0,0
+access_hse_rule_action_manager,HSE Rule Action Manager,model_hse_rule_action,hse_inspection_system.hse_group_manager,1,1,1,1
+access_hse_rule_action_supervisor,HSE Rule Action Supervisor,model_hse_rule_action,hse_inspection_system.hse_group_supervisor,1,1,0,0
+access_hse_rule_action_inspector,HSE Rule Action Inspector,model_hse_rule_action,hse_inspection_system.hse_group_inspector,1,0,0,0
+access_hse_finding_manager,HSE Finding Manager,model_hse_finding,hse_inspection_system.hse_group_manager,1,1,1,1
+access_hse_finding_supervisor,HSE Finding Supervisor,model_hse_finding,hse_inspection_system.hse_group_supervisor,1,1,1,0
+access_hse_finding_inspector,HSE Finding Inspector,model_hse_finding,hse_inspection_system.hse_group_inspector,1,1,1,0
+access_hse_action_manager,HSE CAPA Manager,model_hse_corrective_action,hse_inspection_system.hse_group_manager,1,1,1,1
+access_hse_action_supervisor,HSE CAPA Supervisor,model_hse_corrective_action,hse_inspection_system.hse_group_supervisor,1,1,1,0
+access_hse_action_inspector,HSE CAPA Inspector,model_hse_corrective_action,hse_inspection_system.hse_group_inspector,1,1,1,0

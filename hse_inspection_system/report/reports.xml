@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <report
+        id="action_report_inspection"
+        model="hse.inspection"
+        string="Inspection Audit Report"
+        report_type="qweb-pdf"
+        name="hse_inspection_system.report_inspection"
+        file="hse_inspection_system.report_inspection"
+        print_report_name="'HSE-%s' % (object.reference)"
+    />
+</odoo>

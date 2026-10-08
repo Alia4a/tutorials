@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_hse_inspection" model="ir.sequence">
+        <field name="name">HSE Inspection</field>
+        <field name="code">hse.inspection</field>
+        <field name="prefix">INSP/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="seq_hse_finding" model="ir.sequence">
+        <field name="name">HSE Finding</field>
+        <field name="code">hse.finding</field>
+        <field name="prefix">FND/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="seq_hse_corrective_action" model="ir.sequence">
+        <field name="name">HSE Corrective Action</field>
+        <field name="code">hse.corrective.action</field>
+        <field name="prefix">CA/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>
