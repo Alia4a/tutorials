@@ -52,12 +52,13 @@
                     <field name="description" placeholder="IF ... THEN ..."/>
                     <notebook>
                         <page string="Conditions (IF)">
-                            <p class="oe_grey">Each condition tests one question's answer. Example: Question “Emergency Stop” Equals “fail”.</p>
+                            <p class="oe_grey">Each condition tests one question's answer. Example: Question “Emergency Stop” Equals “fail”. Operators are filtered by question type: Pass/Fail and Yes/No only allow Equals / Not Equals / Empty checks.</p>
                             <field name="condition_ids" context="{'default_rule_id': id}">
                                 <tree editable="bottom">
                                     <field name="question_id"/>
-                                    <field name="operator"/>
-                                    <field name="value_target"/>
+                                    <field name="question_type" invisible="1"/>
+                                    <field name="operator" widget="hse_condition_operator"/>
+                                    <field name="value_target" attrs="{'invisible': [('operator', 'in', ('is_empty', 'is_not_empty'))], 'required': [('operator', 'in', ('equals', 'not_equals', 'contains', 'not_contains', 'greater_than', 'less_than', 'greater_equal', 'less_equal'))]}"/>
                                 </tree>
                             </field>
                         </page>

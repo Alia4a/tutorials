@@ -42,5 +42,9 @@ mgmtsystem_nonconformity`` (CAPA lifecycle) and core
         'demo/demo_data.xml',
     ],
     'demo': [],
-    'assets': {},
+    'assets': {
+        'web.assets_backend': [
+            'hse_inspection_system/static/src/js/condition_operator.js',
+        ],
+    },
 }

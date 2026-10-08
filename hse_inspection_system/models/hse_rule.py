@@ -15,6 +15,36 @@ OPERATORS = [
     ('is_not_empty', 'Is Not Empty / Answered'),
 ]
 
+OPERATOR_LABELS = dict(OPERATORS)
+
+# Allowed operators per question_type. Boolean-like types (pass_fail, yes_no)
+# only support exact match + empty checks; text-like types support
+# contains; numeric/date types support comparisons; file only supports
+# empty checks.
+ALLOWED_OPERATORS_BY_TYPE = {
+    'pass_fail': ['equals', 'not_equals', 'is_empty', 'is_not_empty'],
+    'yes_no': ['equals', 'not_equals', 'is_empty', 'is_not_empty'],
+    'numeric': [
+        'equals', 'not_equals',
+        'greater_than', 'less_than', 'greater_equal', 'less_equal',
+        'is_empty', 'is_not_empty',
+    ],
+    'text': ['equals', 'not_equals', 'contains', 'not_contains', 'is_empty', 'is_not_empty'],
+    'selection': ['equals', 'not_equals', 'contains', 'not_contains', 'is_empty', 'is_not_empty'],
+    'date': [
+        'equals', 'not_equals',
+        'greater_than', 'less_than', 'greater_equal', 'less_equal',
+        'is_empty', 'is_not_empty',
+    ],
+    'file': ['is_empty', 'is_not_empty'],
+}
+
+OPERATORS_REQUIRING_VALUE = {
+    'equals', 'not_equals',
+    'contains', 'not_contains',
+    'greater_than', 'less_than', 'greater_equal', 'less_equal',
+}
+
 
 class HseRule(models.Model):
     _name = 'hse.rule'
@@ -109,12 +139,61 @@ class HseRuleCondition(models.Model):
     question_id = fields.Many2one(
         'hse.checklist.question', string='Question', required=True, ondelete='cascade',
     )
+    question_type = fields.Selection(
+        related='question_id.question_type', string='Question Type', readonly=True,
+    )
     operator = fields.Selection(selection=OPERATORS, string='Operator', default='equals', required=True)
     value_target = fields.Char(
         string='Expected Value',
         help='For Pass/Fail use pass/fail, for Yes/No use yes/no, for numeric use a number, '
              'for text/selection use the text to compare.',
     )
+
+    @api.model
+    def get_allowed_operators(self, question_type):
+        """Return the operator keys valid for a question_type."""
+        if not question_type:
+            return [code for code, _label in OPERATORS]
+        return list(ALLOWED_OPERATORS_BY_TYPE.get(question_type, [code for code, _label in OPERATORS]))
+
+    @api.onchange('question_id')
+    def _onchange_question_id(self):
+        if not self.question_id:
+            return
+        allowed = self.get_allowed_operators(self.question_id.question_type)
+        if self.operator not in allowed:
+            self.operator = allowed[0] if allowed else 'equals'
+            return {
+                'warning': {
+                    'title': 'Operator reset',
+                    'message': 'Operator was reset to "%s" because it is not valid for %s questions.' % (
+                        dict(OPERATORS).get(self.operator, self.operator),
+                        self.question_id.question_type,
+                    ),
+                }
+            }
+        if self.operator in ('is_empty', 'is_not_empty'):
+            self.value_target = False
+
+    @api.onchange('operator')
+    def _onchange_operator(self):
+        if self.operator not in OPERATORS_REQUIRING_VALUE and self.value_target:
+            self.value_target = False
+
+    @api.constrains('question_id', 'operator')
+    def _check_operator_valid_for_question(self):
+        for rec in self:
+            if rec.question_id and rec.operator:
+                allowed = rec.get_allowed_operators(rec.question_id.question_type)
+                if rec.operator not in allowed:
+                    raise ValidationError(
+                        'Operator "%s" is not valid for %s question "%s". Allowed: %s.' % (
+                            dict(OPERATORS).get(rec.operator, rec.operator),
+                            rec.question_id.question_type,
+                            rec.question_id.name,
+                            ', '.join(dict(OPERATORS).get(code, code) for code in allowed),
+                        )
+                    )
 
     def evaluate(self, line):
         """Return True when this condition matches the given inspection line (or lack of one)."""
@@ -126,6 +205,12 @@ class HseRuleCondition(models.Model):
             return bool(line) and bool(line.is_answered)
         if not line or not line.is_answered:
             return False
+        # Guard against stale conditions created before operator filtering:
+        # an operator that is no longer valid for this question type never matches.
+        if line.question_type:
+            allowed = self.get_allowed_operators(line.question_type)
+            if op not in allowed:
+                return False
         actual = line.get_comparable_value() or ''
         expected = (self.value_target or '').strip()
         actual_cmp = actual.strip().lower()
@@ -134,9 +219,13 @@ class HseRuleCondition(models.Model):
             result = actual_cmp == expected_cmp
             return result if op == 'equals' else not result
         if op in ('contains', 'not_contains'):
+            if not expected_cmp:
+                return False
             result = expected_cmp in actual_cmp
             return result if op == 'contains' else not result
-        # Numeric comparisons
+        # Numeric / date comparisons
+        if line.question_type == 'date':
+            return self._compare_dates(actual.strip(), expected, op)
         try:
             actual_num = float(actual.strip())
             expected_num = float(expected)
@@ -150,6 +239,27 @@ class HseRuleCondition(models.Model):
             return actual_num >= expected_num
         if op == 'less_equal':
             return actual_num <= expected_num
+        return False
+
+    @api.model
+    def _compare_dates(self, actual, expected, op):
+        """Compare ISO date strings (YYYY-MM-DD). Return False on parse failure."""
+        from datetime import date
+        try:
+            actual_d = date.fromisoformat(actual) if actual else False
+            expected_d = date.fromisoformat(expected)
+        except ValueError:
+            return False
+        if not actual_d or not expected_d:
+            return False
+        if op == 'greater_than':
+            return actual_d > expected_d
+        if op == 'less_than':
+            return actual_d < expected_d
+        if op == 'greater_equal':
+            return actual_d >= expected_d
+        if op == 'less_equal':
+            return actual_d <= expected_d
         return False
 
 
